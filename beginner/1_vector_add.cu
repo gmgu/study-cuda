@@ -1,4 +1,3 @@
-#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -11,68 +10,76 @@ using namespace std;
 #define N 10000000
 #define MAX_ERR 1e-6
 
-__global__ void vector_add(float *out, float *a, float *b, int n) {
-    int tid = threadIdx.x + blockIdx.x * blockDim.x;
-    if(tid < N)
-        out[tid] = a[tid] + b[tid];
+
+// __global__ means the function is a CUDA kernal
+__global__ void vector_add(float *C, float *A, float *B, int n) {
+  int tid = threadIdx.x + blockIdx.x * blockDim.x;  // each of them as x, y, and z
+                                                    // threadIdx: the index of a thread in a block
+                                                    // blockIdx: the index of a block in a grid
+                                                    // blockDim: the number of threads in a block
+  if(tid < n)  // for the case when a thread (or block) does not divide n
+    C[tid] = A[tid] + B[tid];  // each thread computes this single addition
 }
 
-int main(){
-    float *a, *b, *out;
-    float *d_a, *d_b, *d_out; 
 
-    // Allocate host memory
-    a   = (float*)malloc(sizeof(float) * N);
-    b   = (float*)malloc(sizeof(float) * N);
-    out = (float*)malloc(sizeof(float) * N);
+// casual C++ main function
+int main() {
+  // h_A, h_B, h_C are stored in the CPU (host) memory.
+  // d_A, d_B, d_C are stored in the GPU (device) memory
+  float* h_A = NULL;
+  float* h_B = NULL;
+  float* h_C = NULL; 
+  float* d_A = NULL;
+  float* d_B = NULL;
+  float* d_C = NULL;
 
-    // Initialize host arrays
-    for(int i = 0; i < N; i++){
-        a[i] = 1.0f;
-        b[i] = 2.0f;
-    }
+  // allocate host memory
+  h_A = (float*)malloc(sizeof(float) * N);
+  h_B = (float*)malloc(sizeof(float) * N);
+  h_C = (float*)malloc(sizeof(float) * N);
 
-    // Allocate device memory
-    cudaMalloc((void**)&d_a, sizeof(float) * N);
-    cudaMalloc((void**)&d_b, sizeof(float) * N);
-    cudaMalloc((void**)&d_out, sizeof(float) * N);
+  // initialize host arrays
+  for(int i = 0; i < N; i++) {
+    h_A[i] = 4.0f;  // recall that 1.0f is a float number (4 bytes), and 1.0 is a double number (8 bytes)
+    h_B[i] = 5.0f;
+  }
 
-    // Transfer data from host to device memory
-    cudaMemcpy(d_a, a, sizeof(float) * N, cudaMemcpyHostToDevice);
-    cudaMemcpy(d_b, b, sizeof(float) * N, cudaMemcpyHostToDevice);
+  // allocate device memory
+  cudaMalloc((void**)&d_A, sizeof(float) * N);  // __host__ __device__ cudaError_t cudaMalloc(void** devPtr, size_t size)
+  cudaMalloc((void**)&d_B, sizeof(float) * N);  // void**: it is a pointer (devPtr) of a pointer (d_B)
+  cudaMalloc((void**)&d_C, sizeof(float) * N);  // it will initialize d_C to point an array of size 'sizeof(float) * N'
 
-    int num_block = (int)(N / 256);
-    if(N % 256 != 0)
-        num_block += 1;
+  // transfer data from host to device memory
+  cudaMemcpy(d_A, h_A, sizeof(float) * N, cudaMemcpyHostToDevice);  // __host__ cudaError_t cudaMemcpy(void* dst, const void* src, size_t count, cudaMemcpyKind kind)
+  cudaMemcpy(d_B, h_B, sizeof(float) * N, cudaMemcpyHostToDevice);  // note that it (to, from ...) and not (from, to ...). (How non-intuitive!)
 
-    cudaDeviceProp prop;
-    cudaGetDeviceProperties(&prop, 0);
-    printf("Max grid: %d\n", prop.maxGridSize[0]);
-    printf("Max grid: %d\n", prop.maxGridSize[1]);
-    printf("Max grid: %d\n", prop.maxGridSize[2]);
-    printf("Max Thread: %d %d %d %d\n", prop.maxThreadsPerBlock, prop.maxThreadsDim[0], prop.maxThreadsDim[1], prop.maxThreadsDim[2]);
-    printf("#multiprocessors: %d\n", prop.multiProcessorCount);
+  int num_thread_per_block = 256;  // which is 16 x 16 (this is the most common number)
+  int num_block = (int)(N / num_thread_per_block);  // note that blockDim.x = num_thread_per_block in a kernel
+  if(N % num_thread_per_block != 0)
+    num_block += 1;  // we just add one more block, and handle the edge case
 
-    // Executing kernel 
-    vector_add<<<num_block,256>>>(d_out, d_a, d_b, N);
-    
-    // Transfer data back to host memory
-    cudaMemcpy(out, d_out, sizeof(float) * N, cudaMemcpyDeviceToHost);
+  // executing kernel 
+  vector_add<<<num_block, num_thread_per_block>>>(d_C, d_A, d_B, N);  // <<<,>>> is called an execution configuration.
+  // there is actually a different (and more complicated) way to execute a kernel.
+  // <<<,>>> is just another way of doing that, and the two ways are essentially the same.
+  // anyway, after this line, d_C is computed and stored in the GPU memory
 
-    // Verification
-    for(int i = 0; i < N; i++){
-        assert(fabs(out[i] - a[i] - b[i]) < MAX_ERR);
-    }
-    printf("out[0] = %f\n", out[0]);
-    printf("PASSED\n");
+  // transfer data back to host memory
+  cudaMemcpy(h_C, d_C, sizeof(float) * N, cudaMemcpyDeviceToHost);  // we always need to specify the flow (in this case, GPU -> CPU)
 
-    // Deallocate device memory
-    cudaFree(d_a);
-    cudaFree(d_b);
-    cudaFree(d_out);
+  // verification
+  for(int i = 0; i < N; i++) {
+    assert(fabs(h_C[i] - h_A[i] - h_B[i]) < MAX_ERR);  // MAX_ERR is for the floating point error
+  }
+  printf("Correctly computed C (C[0] = %f)\n", h_C[0]);
 
-    // Deallocate host memory
-    free(a); 
-    free(b); 
-    free(out);
+  // deallocate device memory
+  cudaFree(d_A);  // __host__ __device__ cudaError_t cudaFree(void* devPtr)
+  cudaFree(d_B);
+  cudaFree(d_C);
+
+  // deallocate host memory
+  free(h_A); 
+  free(h_B); 
+  free(h_C);
 }
