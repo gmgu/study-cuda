@@ -3,9 +3,6 @@
 #include <math.h>
 #include <assert.h>
 #include <cuda.h>
-#include <cuda_runtime.h>
-
-using namespace std;
 
 #define N 10000000
 #define MAX_ERR 1e-6
@@ -82,4 +79,6 @@ int main() {
   free(h_A); 
   free(h_B); 
   free(h_C);
+
+  return 0;
 }
