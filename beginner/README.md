@@ -5,7 +5,7 @@ Here, we implement some basic operations using CUDA
 ## Prerequisite
 You need nvcc (nvidia cuda compiler) to compile CUDA C++ code (so install it).
 
-You need NVIDIA GPU. I am using a GTX 3060 12GB GPU
+You need NVIDIA GPU. I am using an NVIDIA Geforece RTX 3060 12GB GPU
 
 ## Operations
 - Vector Addition:
@@ -17,7 +17,7 @@ You need NVIDIA GPU. I am using a GTX 3060 12GB GPU
     ```
 
 - Print Device Property:
-    - Ouput = device properties, such name, total global memory, shared memory per block, and so on.
+    - Ouput = device properties such as name, total global memory, shared memory per block, and so on.
     ```bash
     nvcc 2_device_property.cu -o 2_device_property
     ./2_device_property
