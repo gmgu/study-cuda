@@ -5,8 +5,8 @@ This repository is for studying NVIDIA CUDA C++
 ## Contents
 
 - 1_hello_kernel: what is kernel. kernel that prints "hello world!" twice using two threads.
-- 2_get_threadid: Kernel that prints the thread id.
-- 3_grid_and_block: what is grid and block. prints "hello world!" using multiple blocks.
+- 2_grid_and_block: what is grid and block. prints "hello world!" using multiple blocks.
+- 3_get_threadid: Kernel that prints the thread id.
 - 4_warp: what is warp and branching.
 - 5_global_memory: what is global memory. kernel that (element-wise) multiplies two arrays.
 - 6_shared_memory: what is shared memory. kernel that multiplies two arrays using shared memory.
