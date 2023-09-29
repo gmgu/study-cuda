@@ -1,7 +1,7 @@
 ## What is grid and block
 A kernel is executed N times in parallel by N threads. 
 A grid contains N threads hierarchically using blocks. 
-In other words, a grid consists of NB blocks, and a block consists of MT threads, where NB * NT = N.
+In other words, a grid consists of NB blocks, and a block consists of NT threads, where NB * NT = N.
 A block is a unit that can be executed by one streaming multiprocessor (hardware).
 A block size (i.e., the number of threads in the block; NT) cannot exceed 1024.
 
