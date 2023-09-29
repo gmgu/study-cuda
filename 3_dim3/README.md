@@ -6,10 +6,10 @@ If you assign an integer i to a dim3 variable d3, then d3.x = i and d3.y = d3.z 
 In the execution configuration <<<NB, NT>>>, NB and NT are in fact dim3 variables.
 So, setting NT = 2 actually sets NT.x = 2, NT.y = 1, NT.z = 1.
 The total number of blocks (corr. threads) is equal to NB.x * NB.y * NB.z (corr. NT.x * NT.y * NT.z).
-There are limit for x, y, z in the execution configuration, and the limits depends on the cuda comutability.
+There are limits for x, y, z in the execution configuration, which depend on the cuda comutability.
 
-## Example: kernel that prints "hello kernel!" using dim3
-In the following example, we define a kernel that prints "hello kernel" using dim3.
+## Example: launch a kernel using dim3
+In the following example, we launch a kernel that prints "hello kernel" using dim3.
 
 ```bash
 #include <stdio.h>
