@@ -1,4 +1,4 @@
-## Thread ID
+## Keywords for thread id and block id
 A kernel is a function that is executed N times in parallel by N threads.
 N threads are in a hierarchy of gird, block, and thread.
 There is one grid for a kernel, NB blocks for a grid, and NT threads for a block,
@@ -6,6 +6,7 @@ where NB and NT are three dimentional dim3 variables.
 
 In a kernel, we can identify which thread in a block is executing by keywords threadIdx and blockIdx.
 Each thread has a unique dim3 threadIdx within a block, and each block has a unique dim3 blockIdx within a grid.
+The number of blocks in the grid and the number of threads in a block (both in dim3 type) are visible by gridDim and blockDim, respectively.
 To transform a thread id (or block id) from d im3 type to an integer type,
 one can use the following transformation:
 
@@ -15,7 +16,7 @@ id = idx.z * dim.x * dim.y + idx.y * dim.x + idx.x
 
 Usually, 1D blocks and threads are used for arrays, and multi dimentional blocks and arrays are used for matrices or tensors.
 
-## Example: kernel that prints thread id
+## Example: kernel that prints thread id and block id
 
 ```bash
 #include <stdio.h>
