@@ -9,6 +9,7 @@ In a kernel, we can identify which thread in a block is executing by four keywor
 - blockDim: equal to NT in the execution configuration
 - blockIdx: block index in the dim3 type
 - threadIdx: thread index in the dim3 type
+
 Each thread has a unique dim3 threadIdx within a block, and each block has a unique dim3 blockIdx within a grid.
 The number of blocks in the grid and the number of threads in a block (both in dim3 type) are visible by gridDim and blockDim, respectively.
 To transform a thread id (or block id) from d im3 type to an integer type,
