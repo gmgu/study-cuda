@@ -12,7 +12,6 @@ one can use the following transformation:
 ```math
 id = idx.z * dim.x * dim.y + idx.y * dim.x + idx.x
 ```
-.
 
 Usually, 1D blocks and threads are used for arrays, and multi dimentional blocks and arrays are used for matrices or tensors.
 
