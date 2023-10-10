@@ -1,12 +1,12 @@
 ## Warp
 Warp is a unit of execution of streaming multiprocessor.
 A warp is consists of 32 consecutive threads, and all threads in a warp execute the same operation if they are not branched.
-A warp can branch by the `if` clause and the loop (`for`, 'while') clause.
-When threads in a warp branch due to such clauses, We say that there is a branch divergence in a warp.
+A warp can branch by the `if` clause and the loop (`for`, `while`) clause.
+When threads in a warp branch due to such clauses, we say that there is a branch divergence in a warp.
 Suppost that the set of threads A and the set of threads B in a warp follows different code path.
 One set of threads, say A, are executed together first. At the moment threads in A are executed, threads in B are stalled.
-After A, threads in B are executed together. Likewise, threads in A are stalled at this time.
-Thus, when there is a branch divergence, some amount of streaming multiprocessor will not be utilized and downgrade the performance of parallelism.
+After A, threads in B are executed together. Likewise, threads in A are stalled while threads in B are executed.
+Therefore, when there is a branch divergence, some amount of streaming multiprocessor will not be utilized and will downgrade the performance of parallelism.
 
 ## Branch Example
 In the following example, no_branch() function prints the block id and the thread id of the thread that executes the kernel.
@@ -72,10 +72,10 @@ After all threads in warp 1 are executed, threads in warp 0 are executed.
 ```
 
 The results of the call branch<<<...>>>() is as follows.
-There is a branch divergence in each warp because of the if clause.
-When there is a branch divergence, we can see that only the part of the threads in a warp is executed at the same time.
+There is a branch divergence in each warp because of the `if` clause.
+When there is a branch divergence, we can see that only a part of the threads in a warp is executed at the same time.
 The 4 odd numbered threads in warp 0 are executed together, while the 4 even numbered threads in warp 0 stalled during the execution.
-After the excution of warp 0 for odd numbered threads, warp 1 for odd numbered threads is executed.D Note that warp 1 is also branched.
+After the excution of warp 0 for odd numbered threads, warp 1 for odd numbered threads is executed.
 After the execution of warp 1 for odd numbered threads, warp 1 for even numbered threads is executed. Finally, warp 0 for even numbered threads is executed.
 
 ```bash
@@ -97,3 +97,12 @@ After the execution of warp 1 for odd numbered threads, warp 1 for even numbered
 [BLOCK 0] even numbered thread id 6
 ```
 
+
+## Note
+Unlinke blocks and threads, warp is set by warp scheduler.
+But we should keep in mind the following hierarchy.
+- a grid is composed of blocks
+- a block is composed of warps
+- a warp is composed of 32 threads
+- all (not stalled) threads in a warp execute the same code in parallel (single instruction multiple thread)
+- more warp can be executed in parallel with fewer registers (and shared memory) used per thread. (the number of warps in a streaming processor depends on the amount of resource a warp use)
