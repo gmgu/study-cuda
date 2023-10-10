@@ -100,9 +100,10 @@ After the execution of warp 1 for odd numbered threads, warp 1 for even numbered
 
 ## Note
 Unlinke blocks and threads, warp is set by warp scheduler.
-But we should keep in mind the following hierarchy.
+We should keep in mind the following hierarchy.
 - a grid is composed of blocks
 - a block is composed of warps
-- a warp is composed of 32 threads
-- all (not stalled) threads in a warp execute the same code in parallel (single instruction multiple thread)
-- more warp can be executed in parallel with fewer registers (and shared memory) used per thread. (the number of warps in a streaming processor depends on the amount of resource a warp use)
+- a warp is composed of 32 threads (if the number of threads in a block is less than 32, the rest of the threads are stalled)
+- all (unstalled) threads in a warp execute the same code in parallel (single instruction multiple thread)
+- a thread in a warp stalls if there is a branch divergence.
+- more warps can be executed in parallel with fewer registers (and shared memory) used per thread. (the number of warps in a streaming processor depends on the amount of resource a warp use)
