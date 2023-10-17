@@ -11,7 +11,7 @@ Given the pointers of A and B in GPU, computing the multiplication is straight f
 The results stored in C in GPU is handed over to CPU via `cudaMemcpy()` (from CPU to GPU this time; specifying the direction by cudaMemcpyKind).
 GPU memories are deallocated by `cudaFree()` and CPU memories are deallocated by `free()`.
 
-~~~
+~~~c
 #include <stdio.h>
 #include <cuda.h>
 
