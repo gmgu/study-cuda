@@ -81,3 +81,15 @@ int main() {
   return 0;
 }
 ~~~
+
+
+## Usage
+```bash
+nvcc vector_mul.cu -o program
+./program
+```
+
+## Results
+```bash
+C[0] = 9.000000
+```
