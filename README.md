@@ -9,10 +9,10 @@ This repository is for studying NVIDIA CUDA C++
 - 3_dim3: what is dim3. launch a kernel using dim3.
 - 4_thread_id: kernel that prints the thread id and the block id.
 - 5_warp: what is warp and branching.
+- 6_global_memory: what is global memory. kernel that (element-wise) multiplies two arrays.
 
 ## To be writen
 
-- 6_global_memory: what is global memory. kernel that (element-wise) multiplies two arrays.
 - 7_shared_memory: what is shared memory. kernel that multiplies two arrays using shared memory.
 - 8_constant_memory: what is constant memory. kernel that multiplies two arrays using constant memory.
 - 9_register: what is register. kernel that multiplies an array and a value using register.

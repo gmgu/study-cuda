@@ -5,13 +5,13 @@ It is much slower than other types of memories (such as shared memory, constant 
 
 ## Example: multiplying two vectors
 In the following example script, we element-wise multiply two vectors A and B, and puts the results to the vector C.
-Arrays d_A, d_B, d_C are allocated in the global memory of the GPU when we call `cudaMalloc()`.
-We use `cudaMemcpy()` to initialize the arrays allocated in GPU with values of the arrays reside in CPU. (data communication occurs from CPU to GPU)
+Arrays A, B, C are allocated in the global memory of the GPU when we call `cudaMalloc()`.
+We use `cudaMemcpy()` to initialize the arrays allocated in GPU with values of the arrays reside in CPU. (data communication occurs from CPU to GPU.)
 Given the pointers of A and B in GPU, computing the multiplication is straight forward.
-The results stored in C in GPU is handed over to CPU via `cudaMemcpy()`.
-GPU memories are cleaned by `cudaFree()` and CPU memories are cleaned by `free()`.
+The results stored in C in GPU is handed over to CPU via `cudaMemcpy()` (from CPU to GPU this time; specifying the direction by cudaMemcpyKind).
+GPU memories are deallocated by `cudaFree()` and CPU memories are deallocated by `free()`.
 
-```bash
+~~~
 #include <stdio.h>
 #include <cuda.h>
 
@@ -80,4 +80,4 @@ int main() {
 
   return 0;
 }
-```
+~~~
